@@ -1,6 +1,7 @@
 requests
 pandas
 matplotlib
+matplotlib.pyplot
 streamlit
 transformers
 bs4 
