@@ -1,7 +1,7 @@
 requests
 pandas
 matplotlib
-matplotlib.pyplot
+matplotlib==3.8.2
 streamlit
 transformers
 bs4 
