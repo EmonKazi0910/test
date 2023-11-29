@@ -6,3 +6,4 @@ streamlit
 transformers
 bs4 
 autoscraper 
+tensorflow==2.14.0
