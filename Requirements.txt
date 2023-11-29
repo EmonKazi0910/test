@@ -6,3 +6,4 @@ transformers
 bs4 
 autoscraper 
 pytorch
+numpy
