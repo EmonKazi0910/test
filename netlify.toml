@@ -1,3 +1,3 @@
 [build]
-  publish = "streamlit_app"  # Set the directory where your Streamlit app is located
-  command = "streamlit run app.py"  # Adjust based on your Streamlit app entry point
+  publish = "streamlit_app"
+  command = "streamlit run streamlit_app/app.py"
