@@ -1,3 +1,4 @@
+# Import necessary libraries
 import streamlit as st
 import requests
 import pandas as pd
@@ -21,31 +22,40 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import time
 from selenium.common.exceptions import NoSuchElementException 
+
 ###################################CODE#########################################################################
+
 # Load the sentiment analysis model from Hugging Face
 @st.cache_resource
 def load_sentiment_model():
+    # Load tokenizer and model for sentiment analysis
     tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
     model = AutoModelForSequenceClassification.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
     return tokenizer, model
+
 def load_sentiment_modelurl():
-        tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-        model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
-        return tokenizer, model
+    # Load tokenizer and model for sentiment analysis from a different source
+    tokenizer = AutoTokenizer.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    model = AutoModelForSequenceClassification.from_pretrained("nlptown/bert-base-multilingual-uncased-sentiment")
+    return tokenizer, model
+
 def load_sentiment_modelcsv():
+    # Load sentiment analysis model using pipeline (assuming from transformers library)
     sentiment_model = pipeline('sentiment-analysis')
     return 
 
-
 ###############################################################################################################################
+
 # Live Review Analyzer
 def analyze_live_review():
+    # Streamlit UI for live review analysis
     st.subheader("Live Review Analyzer")
     tokenizer, model = load_sentiment_model()
     live_review = st.text_area('Enter your review here', max_chars=1000)
     analyze_button = st.button('Analyze Review')
 
     if analyze_button and live_review:
+        # Tokenize and analyze live review
         inputs = tokenizer(live_review, return_tensors='pt')
         outputs = model(**inputs)
         predicted_label = torch.argmax(outputs.logits)
@@ -53,23 +63,21 @@ def analyze_live_review():
         sentiment_mapping = {0: 'Negative', 1: 'Neutral', 2: 'Positive'}
         sentiment_label = sentiment_mapping[predicted_label.item()]
 
+        # Display sentiment analysis result
         st.subheader("Sentiment Analysis Result:")
         st.write(f"Review: {live_review}")
         st.write(f"Sentiment: {sentiment_label}")
         st.write(f"Confidence: {score.item():.4f}")
+
 ###############################################################################################################
+
 # Function to perform sentiment analysis on Amazon reviews
-
 def analyze_amazon_reviews():
-    
-    
-    
-
     tokenizer, model = load_sentiment_modelurl()
 
     # Naming the Web App
     st.title('Sentiment 2.0')
-    st.markdown('This app uses web scraping to get product reviews from the provided Amazon URL. '
+    st.markdown('This module uses web scraping to get product reviews from the provided Amazon URL. '
                 'It then processes the reviews through the HuggingFace transformers model for sentiment analysis.'
                 'The resulting sentiments and corresponding reviews are, '
                 'then put in a dataframe for display which is what you see as a result.')
@@ -123,6 +131,7 @@ def analyze_amazon_reviews():
             driver.quit()
 
         return reviews_data
+
     # Sentiment analysis function using DistilBERT
     def distilbert_sentiment_analysis(reviews):
         # Tokenize the reviews
@@ -165,11 +174,14 @@ def analyze_amazon_reviews():
 
                 # Display the DataFrame using Streamlit
                 st.write(df)
-                st.bar_chart(df2, x="Reviews", y="Rating out of 5")
+                st.bar_chart(df2, x="Rating out of 5", y="Reviews")
+
     # Run the Streamlit app if the script is executed directly
     if __name__ == '__main__':
         run()
+
 ################################################################################################################
+
 # Load the sentiment analysis model from Hugging Face
 MODEL = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 
@@ -189,6 +201,7 @@ model = load_model()
 
 # Function to preprocess text
 def preprocess(text):
+    # Preprocess text by replacing user mentions and URLs
     new_text = []
     for t in text.split(" "):
         t = '@user' if t.startswith('@') and len(t) > 1 else t
@@ -199,6 +212,7 @@ def preprocess(text):
 # Function to perform sentiment analysis
 @st.cache_resource(max_entries=1, hash_funcs={pd.DataFrame: lambda _: None})
 def analyze_sentiment(df):
+    # Perform sentiment analysis on the provided DataFrame
     text_column = 'Review text' if 'Review text' in df.columns else 'Reviews'
     texts = df[text_column].tolist()
 
@@ -241,23 +255,45 @@ def analyze_csv():
         st.subheader("Pie Chart - Sentiment Distribution")
         fig = px.pie(df, names='Sentiment_Label', title='Sentiment Distribution')
         st.plotly_chart(fig)
+
 #####################################################################################################################
+
 # Create a multi-page Streamlit app
 def main():
     st.title('Sentiment Analysis Web App')
 
+    # Sidebar menu for different pages
     menu = ["Home", "Live Review Analyzer", "Amazon Review Scraper", "Sentiment Analysis from CSV"]
     choice = st.sidebar.selectbox("Select Page", menu)
 
     if choice == "Home":
-        st.subheader("Home Page")
-        st.write("Welcome to the Sentiment Analysis App! Choose a page from the sidebar to get started.")
+        # Home page with welcome message
+        st.subheader("Welcome")
+        st.write("Explore the power of sentiment analysis with My innovative project. This web app empowers you to understand and analyze sentiments effortlessly. Dive into the world of customer feedback and reviews, gaining valuable insights for informed decisions. Discover the future of sentiment analysis, crafted with precision for your convenience.")
     elif choice == "Live Review Analyzer":
+        # Call the live review analyzer function
         analyze_live_review()
     elif choice == "Amazon Review Scraper":
+        # Call the Amazon review scraper function
         analyze_amazon_reviews()
     elif choice == "Sentiment Analysis from CSV":
+        # Call the CSV sentiment analysis function
         analyze_csv()
 
 if __name__ == "__main__":
     main()
+
+# Remove Streamlit default footer
+st.markdown("""
+    <style>
+        .viewerBadge_container__1QSob {
+            display: none;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Add your custom footer with small and grey styling
+st.markdown(
+    "<p style='font-size: 10px; color: grey;'>Made By Emon Kazi Abu Taleb (192401) - Arab Open University</p>",
+    unsafe_allow_html=True
+)
