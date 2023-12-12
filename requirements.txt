@@ -5,7 +5,7 @@ matplotlib==3.4.3
 transformers==4.35.2
 beautifulsoup4==4.12.2
 autoscraper==1.1.14
-torch==1.1.1
+torch
 plotly==5.18.0
 scipy==1.11.4
 selenium==4.15.2
