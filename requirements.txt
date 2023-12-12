@@ -7,5 +7,5 @@ beautifulsoup4==4.12.2
 autoscraper==1.1.14
 torch
 plotly==5.18.0
-scipy==1.11.4
+scipy
 selenium==4.15.2
